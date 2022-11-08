@@ -19,16 +19,18 @@ type ServerConfig struct {
 var ClientCFG ClientConfig
 var ServerCFG ServerConfig
 
-func Setup() {
+func SetupClient() {
 	var clientConfig ClientConfig
-	var serverConfig ServerConfig
 	if err := envconfig.Process("COTACAO", &clientConfig); err != nil {
 		panic(err)
 	}
+	ClientCFG = clientConfig
+}
+
+func SetupServer() {
+	var serverConfig ServerConfig
 	if err := envconfig.Process("SERVER", &serverConfig); err != nil {
 		panic(err)
 	}
-	ClientCFG = clientConfig
 	ServerCFG = serverConfig
-
 }
