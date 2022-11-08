@@ -20,18 +20,14 @@ var ClientCFG ClientConfig
 var ServerCFG ServerConfig
 
 func Setup() {
-
 	var clientConfig ClientConfig
 	var serverConfig ServerConfig
-
 	if err := envconfig.Process("COTACAO", &clientConfig); err != nil {
 		panic(err)
 	}
-
 	if err := envconfig.Process("SERVER", &serverConfig); err != nil {
 		panic(err)
 	}
-
 	ClientCFG = clientConfig
 	ServerCFG = serverConfig
 
