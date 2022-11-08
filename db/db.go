@@ -2,13 +2,14 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/rodrigoafernandes/desafio-client-server-api/config"
 )
 
-const INIT_DB string = `
+const InitDb string = `
 	CREATE TABLE IF NOT EXISTS cotacoes(
-	    id INTEGER NOT NULL PRIMARY KEY,
+	    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 	    code TEXT NOT NULL,
 	    codein TEXT NOT NULL,
 	    name TEXT NOT NULL,
@@ -28,13 +29,13 @@ var DB *sql.DB
 
 func SetupDatabase(cfg config.ServerConfig) {
 	driverName := "sqlite3"
-	connectionString := cfg.DbConnectionString
+	connectionString := fmt.Sprintf("%s.db", cfg.DbConnectionString)
 	dbTemp, err := sql.Open(driverName, connectionString)
 	if err != nil {
 		panic(err)
 	}
 
-	if _, err = dbTemp.Exec(INIT_DB); err != nil {
+	if _, err = dbTemp.Exec(InitDb); err != nil {
 		panic(err)
 	}
 
