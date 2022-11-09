@@ -13,5 +13,4 @@ type CotacaoDB struct {
 	Ask        string `json:"ask"`
 	Timestamp  string `json:"timestamp"`
 	CreateDate string `json:"create_date"`
-	Payload    string `json:"payload"`
 }

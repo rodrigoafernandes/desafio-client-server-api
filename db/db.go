@@ -20,8 +20,7 @@ const InitDb string = `
 	    bid TEXT NOT NULL,
 	    ask TEXT NOT NULL,
 	    timestamp TEXT NOT NULL,
-	    create_date TEXT NOT NULL,
-	    payload TEXT NOT NULL
+	    create_date TEXT NOT NULL
 	)
 `
 

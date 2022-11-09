@@ -1,21 +1,28 @@
 package cotacao
 
 import (
+	"context"
 	"database/sql"
+	"github.com/rodrigoafernandes/desafio-client-server-api/config"
+	"time"
 )
 
 type Repository struct {
-	db *sql.DB
+	db      *sql.DB
+	timeout int
 }
 
-func NewRepository(db *sql.DB) Repository {
+func NewRepository(db *sql.DB, cfg config.ServerConfig) Repository {
 	return Repository{
-		db: db,
+		db:      db,
+		timeout: cfg.DbTransactionTimeoutMilliseconds,
 	}
 }
 
 func (r Repository) Save(cotacao CotacaoDB) error {
-	_, err := r.db.Exec(`
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(r.timeout)*time.Millisecond)
+	defer cancel()
+	_, err := r.db.ExecContext(ctx, `
 		INSERT INTO cotacoes (
                       code,
                       codein,
@@ -27,9 +34,8 @@ func (r Repository) Save(cotacao CotacaoDB) error {
                       bid,
                       ask,
                       timestamp,
-                      create_date,
-                      payload
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+                      create_date
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
 		cotacao.Code,
 		cotacao.CodeIn,
 		cotacao.Name,
@@ -41,7 +47,6 @@ func (r Repository) Save(cotacao CotacaoDB) error {
 		cotacao.Ask,
 		cotacao.Timestamp,
 		cotacao.CreateDate,
-		cotacao.Payload,
 	)
 	return err
 }
