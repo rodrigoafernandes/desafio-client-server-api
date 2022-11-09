@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"github.com/rodrigoafernandes/desafio-client-server-api/api"
 	"github.com/rodrigoafernandes/desafio-client-server-api/config"
 	"github.com/rodrigoafernandes/desafio-client-server-api/db"
 )
@@ -9,5 +9,5 @@ import (
 func main() {
 	config.SetupServer()
 	db.SetupDatabase(config.ServerCFG)
-	fmt.Println("server app")
+	api.Setup()
 }
