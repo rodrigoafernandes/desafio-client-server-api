@@ -4,7 +4,7 @@ import "github.com/kelseyhightower/envconfig"
 
 type ClientConfig struct {
 	CotacaoServerUrl                       string `envconfig:"SERVER_URL"`
-	CotacaoServerPort                      string `envconfig:"SERVER_PORT"`
+	CotacaoServerPort                      int    `envconfig:"SERVER_PORT"`
 	CotacaoServerClientTimeoutMilliseconds int    `envconfig:"SERVER_CLIENT_TIMEOUT_MS"`
 	ArquivoOutputPath                      string `envconfig:"ARQUIVO_OUTPUT_PATH"`
 }
