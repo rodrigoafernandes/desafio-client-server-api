@@ -3,7 +3,6 @@ package ws
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/rodrigoafernandes/desafio-client-server-api/config"
 	"net/http"
@@ -26,13 +25,13 @@ func NewCotacaoWSClient(cfg config.ClientConfig) (CotacaoWSClient, error) {
 		timeout: cfg.CotacaoServerClientTimeoutMilliseconds,
 	}
 	if cotacaoClient.timeout < 1 {
-		return CotacaoWSClient{}, errors.New("milliseconds timeout must be greater then zero")
+		cotacaoClient.timeout = 300
 	}
 	if cotacaoClient.url == "" {
-		return CotacaoWSClient{}, errors.New("economia ws client url must be informed")
+		cotacaoClient.url = "http://localhost"
 	}
 	if cotacaoClient.port < 1 {
-		cotacaoClient.port = 80
+		cotacaoClient.port = 8080
 	}
 	return cotacaoClient, nil
 }

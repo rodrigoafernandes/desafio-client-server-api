@@ -13,10 +13,14 @@ type Repository struct {
 }
 
 func NewRepository(db *sql.DB, cfg config.ServerConfig) Repository {
-	return Repository{
+	repository := Repository{
 		db:      db,
 		timeout: cfg.DbTransactionTimeoutMilliseconds,
 	}
+	if repository.timeout < 1 {
+		repository.timeout = 10
+	}
+	return repository
 }
 
 func (r Repository) Save(cotacao CotacaoDB) error {

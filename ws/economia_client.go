@@ -3,7 +3,6 @@ package ws
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/rodrigoafernandes/desafio-client-server-api/config"
 	"net/http"
@@ -41,10 +40,10 @@ func NewEconomiaWSClient(cfg config.ServerConfig) (EconomiaWSClient, error) {
 		url:     cfg.EconomiaWSUrl,
 	}
 	if economiaWSClient.timeout < 1 {
-		return EconomiaWSClient{}, errors.New("milliseconds timeout must be greater then zero")
+		economiaWSClient.timeout = 200
 	}
 	if economiaWSClient.url == "" {
-		return EconomiaWSClient{}, errors.New("economia ws client url must be informed")
+		economiaWSClient.url = "https://economia.awesomeapi.com.br"
 	}
 	return economiaWSClient, nil
 }
