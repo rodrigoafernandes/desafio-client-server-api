@@ -3,6 +3,7 @@ package ws
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/rodrigoafernandes/desafio-client-server-api/config"
 	"net/http"
@@ -48,9 +49,12 @@ func (cotacaoClient CotacaoWSClient) GetUSDBRLQuotation() (float64, error) {
 		return 0, err
 	}
 	defer response.Body.Close()
+	if response.StatusCode < 200 || response.StatusCode > 299 {
+		return 0, errors.New("serviço de cotação indisponível")
+	}
 	var responseBody Cotacao
 	if err = json.NewDecoder(response.Body).Decode(&responseBody); err != nil {
-		return 0, nil
+		return 0, err
 	}
 	bid, err := strconv.ParseFloat(responseBody.Bid, 64)
 	if err != nil {

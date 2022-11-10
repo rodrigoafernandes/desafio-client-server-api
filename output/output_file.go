@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/rodrigoafernandes/desafio-client-server-api/config"
 	"os"
+	"strings"
 )
 
 type ResultOutput struct {
@@ -12,7 +13,12 @@ type ResultOutput struct {
 
 func NewResultOutput(cfg config.ClientConfig) (ResultOutput, error) {
 	filename := cfg.ArquivoOutputPath
-	ro := ResultOutput{Filename: filename}
+	if len(strings.TrimSpace(filename)) == 0 {
+		filename = "results.txt"
+	}
+	ro := ResultOutput{
+		Filename: filename,
+	}
 	return ro, nil
 }
 
