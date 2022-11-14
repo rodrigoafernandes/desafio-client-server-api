@@ -1,28 +1,26 @@
 package cotacao
 
 import (
-	"github.com/rodrigoafernandes/desafio-client-server-api/config"
-	"github.com/rodrigoafernandes/desafio-client-server-api/db"
 	"github.com/rodrigoafernandes/desafio-client-server-api/ws"
 )
 
-type QuotationService struct {
+type QuotationService interface {
+	GetUSDQuotation() (ws.Cotacao, error)
+}
+
+type QuotationServiceImpl struct {
 	client ws.EconomiaWSClient
 	repo   Repository
 }
 
-func NewQuotationService(cfg config.ServerConfig) (QuotationService, error) {
-	wsClient, err := ws.NewEconomiaWSClient(cfg)
-	if err != nil {
-		return QuotationService{}, err
-	}
-	return QuotationService{
+func NewQuotationService(wsClient ws.EconomiaWSClient, repository Repository) (QuotationServiceImpl, error) {
+	return QuotationServiceImpl{
 		client: wsClient,
-		repo:   NewRepository(db.DB, cfg),
+		repo:   repository,
 	}, nil
 }
 
-func (qs QuotationService) GetUSDQuotation() (ws.Cotacao, error) {
+func (qs QuotationServiceImpl) GetUSDQuotation() (ws.Cotacao, error) {
 	cotacao, err := qs.client.GetUSDQuotationFromBRL()
 	if err != nil {
 		return ws.Cotacao{}, err

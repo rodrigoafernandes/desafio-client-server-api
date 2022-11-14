@@ -7,22 +7,26 @@ import (
 	"strings"
 )
 
-type ResultOutput struct {
+type ResultOutput interface {
+	WriteQuotationResult(bid float64) error
+}
+
+type ResultOutputImpl struct {
 	Filename string
 }
 
-func NewResultOutput(cfg config.ClientConfig) (ResultOutput, error) {
+func NewResultOutput(cfg config.ClientConfig) (ResultOutputImpl, error) {
 	filename := cfg.ArquivoOutputPath
 	if len(strings.TrimSpace(filename)) == 0 {
 		filename = "results.txt"
 	}
-	ro := ResultOutput{
+	ro := ResultOutputImpl{
 		Filename: filename,
 	}
 	return ro, nil
 }
 
-func (ro ResultOutput) WriteQuotationResult(bid float64) error {
+func (ro ResultOutputImpl) WriteQuotationResult(bid float64) error {
 	file, err := os.OpenFile(ro.Filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	defer file.Close()
 	if err != nil {

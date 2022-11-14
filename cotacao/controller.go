@@ -2,7 +2,6 @@ package cotacao
 
 import (
 	"encoding/json"
-	"github.com/rodrigoafernandes/desafio-client-server-api/config"
 	"net/http"
 )
 
@@ -10,11 +9,7 @@ type Controller struct {
 	svc QuotationService
 }
 
-func NewController(cfg config.ServerConfig) (Controller, error) {
-	quotationService, err := NewQuotationService(cfg)
-	if err != nil {
-		return Controller{}, err
-	}
+func NewController(quotationService QuotationService) (Controller, error) {
 	controller := Controller{
 		svc: quotationService,
 	}

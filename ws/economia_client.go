@@ -9,7 +9,11 @@ import (
 	"time"
 )
 
-type EconomiaWSClient struct {
+type EconomiaWSClient interface {
+	GetUSDQuotationFromBRL() (Cotacao, error)
+}
+
+type EconomiaWSClientImpl struct {
 	client  *http.Client
 	url     string
 	timeout int
@@ -33,8 +37,8 @@ type Cotacao struct {
 	CreateDate string `json:"create_date"`
 }
 
-func NewEconomiaWSClient(cfg config.ServerConfig) (EconomiaWSClient, error) {
-	economiaWSClient := EconomiaWSClient{
+func NewEconomiaWSClient(cfg config.ServerConfig) (EconomiaWSClientImpl, error) {
+	economiaWSClient := EconomiaWSClientImpl{
 		client:  http.DefaultClient,
 		timeout: cfg.EconomiaWSTimeoutMilliseconds,
 		url:     cfg.EconomiaWSUrl,
@@ -48,7 +52,7 @@ func NewEconomiaWSClient(cfg config.ServerConfig) (EconomiaWSClient, error) {
 	return economiaWSClient, nil
 }
 
-func (eWSClient EconomiaWSClient) GetUSDQuotationFromBRL() (Cotacao, error) {
+func (eWSClient EconomiaWSClientImpl) GetUSDQuotationFromBRL() (Cotacao, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(eWSClient.timeout)*time.Millisecond)
 	defer cancel()
 	request, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("%s/json/last/USD-BRL", eWSClient.url), nil)
