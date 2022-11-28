@@ -6,12 +6,13 @@ import (
 	"github.com/rodrigoafernandes/desafio-client-server-api/cotacao"
 	"github.com/rodrigoafernandes/desafio-client-server-api/db"
 	"github.com/rodrigoafernandes/desafio-client-server-api/ws"
+	"net/http"
 )
 
 func main() {
 	config.SetupServer()
 	db.SetupDatabase(config.ServerCFG)
-	wsClient, err := ws.NewEconomiaWSClient(config.ServerCFG)
+	wsClient, err := ws.NewEconomiaWSClient(config.ServerCFG, http.DefaultClient)
 	if err != nil {
 		panic(err)
 	}

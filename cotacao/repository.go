@@ -11,13 +11,13 @@ type Repository interface {
 	Save(cotacao CotacaoDB) error
 }
 
-type RepositoryImpl struct {
+type repositoryImpl struct {
 	db      *sql.DB
 	timeout int
 }
 
-func NewRepository(db *sql.DB, cfg config.ServerConfig) RepositoryImpl {
-	repository := RepositoryImpl{
+func NewRepository(db *sql.DB, cfg config.ServerConfig) Repository {
+	repository := repositoryImpl{
 		db:      db,
 		timeout: cfg.DbTransactionTimeoutMilliseconds,
 	}
@@ -27,7 +27,7 @@ func NewRepository(db *sql.DB, cfg config.ServerConfig) RepositoryImpl {
 	return repository
 }
 
-func (r RepositoryImpl) Save(cotacao CotacaoDB) error {
+func (r repositoryImpl) Save(cotacao CotacaoDB) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(r.timeout)*time.Millisecond)
 	defer cancel()
 	_, err := r.db.ExecContext(ctx, `

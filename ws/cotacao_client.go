@@ -15,15 +15,15 @@ type CotacaoWSClient interface {
 	GetUSDBRLQuotation() (float64, error)
 }
 
-type CotacaoWSClientImpl struct {
+type cotacaoWSClientImpl struct {
 	client  *http.Client
 	url     string
 	port    int
 	timeout int
 }
 
-func NewCotacaoWSClient(cfg config.ClientConfig) (CotacaoWSClientImpl, error) {
-	cotacaoClient := CotacaoWSClientImpl{
+func NewCotacaoWSClient(cfg config.ClientConfig) (CotacaoWSClient, error) {
+	cotacaoClient := cotacaoWSClientImpl{
 		client:  http.DefaultClient,
 		url:     cfg.CotacaoServerUrl,
 		port:    cfg.CotacaoServerPort,
@@ -41,7 +41,7 @@ func NewCotacaoWSClient(cfg config.ClientConfig) (CotacaoWSClientImpl, error) {
 	return cotacaoClient, nil
 }
 
-func (cotacaoClient CotacaoWSClientImpl) GetUSDBRLQuotation() (float64, error) {
+func (cotacaoClient cotacaoWSClientImpl) GetUSDBRLQuotation() (float64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(cotacaoClient.timeout)*time.Millisecond)
 	defer cancel()
 	request, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("%s:%d/cotacao", cotacaoClient.url, cotacaoClient.port), nil)

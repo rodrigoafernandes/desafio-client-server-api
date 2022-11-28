@@ -23,8 +23,5 @@ func (c Controller) GetCotacaoUSD(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-type", "application/json")
-	if err = json.NewEncoder(w).Encode(cotacao); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	_ = json.NewEncoder(w).Encode(cotacao)
 }

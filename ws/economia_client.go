@@ -13,8 +13,8 @@ type EconomiaWSClient interface {
 	GetUSDQuotationFromBRL() (Cotacao, error)
 }
 
-type EconomiaWSClientImpl struct {
-	client  *http.Client
+type economiaWSClientImpl struct {
+	client  httpClient
 	url     string
 	timeout int
 }
@@ -37,9 +37,9 @@ type Cotacao struct {
 	CreateDate string `json:"create_date"`
 }
 
-func NewEconomiaWSClient(cfg config.ServerConfig) (EconomiaWSClientImpl, error) {
-	economiaWSClient := EconomiaWSClientImpl{
-		client:  http.DefaultClient,
+func NewEconomiaWSClient(cfg config.ServerConfig, client httpClient) (EconomiaWSClient, error) {
+	economiaWSClient := economiaWSClientImpl{
+		client:  client,
 		timeout: cfg.EconomiaWSTimeoutMilliseconds,
 		url:     cfg.EconomiaWSUrl,
 	}
@@ -52,21 +52,21 @@ func NewEconomiaWSClient(cfg config.ServerConfig) (EconomiaWSClientImpl, error) 
 	return economiaWSClient, nil
 }
 
-func (eWSClient EconomiaWSClientImpl) GetUSDQuotationFromBRL() (Cotacao, error) {
+func (eWSClient economiaWSClientImpl) GetUSDQuotationFromBRL() (Cotacao, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(eWSClient.timeout)*time.Millisecond)
 	defer cancel()
 	request, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("%s/json/last/USD-BRL", eWSClient.url), nil)
 	if err != nil {
 		return Cotacao{}, err
 	}
-	response, err := http.DefaultClient.Do(request)
+	response, err := eWSClient.client.Do(request)
 	if err != nil {
 		return Cotacao{}, err
 	}
 	defer response.Body.Close()
 	var responseBody economiaWSResponse
 	if err = json.NewDecoder(response.Body).Decode(&responseBody); err != nil {
-		return Cotacao{}, nil
+		return Cotacao{}, err
 	}
 	return responseBody.FromCurrencyToCurrency, nil
 }

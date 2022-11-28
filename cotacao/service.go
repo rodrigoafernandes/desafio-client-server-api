@@ -8,19 +8,19 @@ type QuotationService interface {
 	GetUSDQuotation() (ws.Cotacao, error)
 }
 
-type QuotationServiceImpl struct {
+type quotationServiceImpl struct {
 	client ws.EconomiaWSClient
 	repo   Repository
 }
 
-func NewQuotationService(wsClient ws.EconomiaWSClient, repository Repository) (QuotationServiceImpl, error) {
-	return QuotationServiceImpl{
+func NewQuotationService(wsClient ws.EconomiaWSClient, repository Repository) (QuotationService, error) {
+	return quotationServiceImpl{
 		client: wsClient,
 		repo:   repository,
 	}, nil
 }
 
-func (qs QuotationServiceImpl) GetUSDQuotation() (ws.Cotacao, error) {
+func (qs quotationServiceImpl) GetUSDQuotation() (ws.Cotacao, error) {
 	cotacao, err := qs.client.GetUSDQuotationFromBRL()
 	if err != nil {
 		return ws.Cotacao{}, err
