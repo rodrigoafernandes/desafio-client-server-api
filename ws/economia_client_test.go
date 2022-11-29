@@ -11,15 +11,6 @@ import (
 	"testing"
 )
 
-type httpClientMock struct {
-	mock.Mock
-}
-
-func (hClient httpClientMock) Do(r *http.Request) (*http.Response, error) {
-	args := hClient.Called()
-	return args.Get(0).(*http.Response), args.Error(1)
-}
-
 type testingScenario func(t *testing.T)
 
 type scenario struct {

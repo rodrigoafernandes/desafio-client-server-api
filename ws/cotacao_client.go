@@ -16,15 +16,15 @@ type CotacaoWSClient interface {
 }
 
 type cotacaoWSClientImpl struct {
-	client  *http.Client
+	client  httpClient
 	url     string
 	port    int
 	timeout int
 }
 
-func NewCotacaoWSClient(cfg config.ClientConfig) (CotacaoWSClient, error) {
+func NewCotacaoWSClient(cfg config.ClientConfig, hClient httpClient) (CotacaoWSClient, error) {
 	cotacaoClient := cotacaoWSClientImpl{
-		client:  http.DefaultClient,
+		client:  hClient,
 		url:     cfg.CotacaoServerUrl,
 		port:    cfg.CotacaoServerPort,
 		timeout: cfg.CotacaoServerClientTimeoutMilliseconds,
@@ -48,7 +48,7 @@ func (cotacaoClient cotacaoWSClientImpl) GetUSDBRLQuotation() (float64, error) {
 	if err != nil {
 		return 0, err
 	}
-	response, err := http.DefaultClient.Do(request)
+	response, err := cotacaoClient.client.Do(request)
 	if err != nil {
 		return 0, err
 	}
