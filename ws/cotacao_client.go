@@ -11,16 +11,20 @@ import (
 	"time"
 )
 
-type CotacaoWSClient struct {
-	client  *http.Client
+type CotacaoWSClient interface {
+	GetUSDBRLQuotation() (float64, error)
+}
+
+type cotacaoWSClientImpl struct {
+	client  httpClient
 	url     string
 	port    int
 	timeout int
 }
 
-func NewCotacaoWSClient(cfg config.ClientConfig) (CotacaoWSClient, error) {
-	cotacaoClient := CotacaoWSClient{
-		client:  http.DefaultClient,
+func NewCotacaoWSClient(cfg config.ClientConfig, hClient httpClient) (CotacaoWSClient, error) {
+	cotacaoClient := cotacaoWSClientImpl{
+		client:  hClient,
 		url:     cfg.CotacaoServerUrl,
 		port:    cfg.CotacaoServerPort,
 		timeout: cfg.CotacaoServerClientTimeoutMilliseconds,
@@ -37,14 +41,14 @@ func NewCotacaoWSClient(cfg config.ClientConfig) (CotacaoWSClient, error) {
 	return cotacaoClient, nil
 }
 
-func (cotacaoClient CotacaoWSClient) GetUSDBRLQuotation() (float64, error) {
+func (cotacaoClient cotacaoWSClientImpl) GetUSDBRLQuotation() (float64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(cotacaoClient.timeout)*time.Millisecond)
 	defer cancel()
 	request, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("%s:%d/cotacao", cotacaoClient.url, cotacaoClient.port), nil)
 	if err != nil {
 		return 0, err
 	}
-	response, err := http.DefaultClient.Do(request)
+	response, err := cotacaoClient.client.Do(request)
 	if err != nil {
 		return 0, err
 	}

@@ -1,14 +1,13 @@
 package api
 
 import (
-	"github.com/rodrigoafernandes/desafio-client-server-api/config"
 	"github.com/rodrigoafernandes/desafio-client-server-api/cotacao"
 	"log"
 	"net/http"
 )
 
-func Setup() {
-	controller, err := cotacao.NewController(config.ServerCFG)
+func Setup(quotationService cotacao.QuotationService) {
+	controller, err := cotacao.NewController(quotationService)
 	if err != nil {
 		panic(err)
 	}

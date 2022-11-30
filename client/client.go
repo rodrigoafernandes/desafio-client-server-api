@@ -4,11 +4,12 @@ import (
 	"github.com/rodrigoafernandes/desafio-client-server-api/config"
 	"github.com/rodrigoafernandes/desafio-client-server-api/output"
 	"github.com/rodrigoafernandes/desafio-client-server-api/ws"
+	"net/http"
 )
 
 func main() {
 	config.SetupClient()
-	cotacaoClient, err := ws.NewCotacaoWSClient(config.ClientCFG)
+	cotacaoClient, err := ws.NewCotacaoWSClient(config.ClientCFG, http.DefaultClient)
 	if err != nil {
 		panic(err)
 	}

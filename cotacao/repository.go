@@ -7,13 +7,17 @@ import (
 	"time"
 )
 
-type Repository struct {
+type Repository interface {
+	Save(cotacao CotacaoDB) error
+}
+
+type repositoryImpl struct {
 	db      *sql.DB
 	timeout int
 }
 
 func NewRepository(db *sql.DB, cfg config.ServerConfig) Repository {
-	repository := Repository{
+	repository := repositoryImpl{
 		db:      db,
 		timeout: cfg.DbTransactionTimeoutMilliseconds,
 	}
@@ -23,7 +27,7 @@ func NewRepository(db *sql.DB, cfg config.ServerConfig) Repository {
 	return repository
 }
 
-func (r Repository) Save(cotacao CotacaoDB) error {
+func (r repositoryImpl) Save(cotacao CotacaoDB) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(r.timeout)*time.Millisecond)
 	defer cancel()
 	_, err := r.db.ExecContext(ctx, `
